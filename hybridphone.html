@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HybridPhone - The Dual OS Smartphone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #00ff9d;
+            --text: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --card-bg: #1e293b;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --payment-card: #1e3a8a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--secondary);
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 0.3rem;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+            background-color: var(--secondary);
+        }
+
+        .product-section {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .product-section {
+                flex-direction: row;
+            }
+        }
+
+        .product-image {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .main-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 255, 157, 0.1);
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--secondary);
+        }
+
+        .phone-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transform: perspective(1000px) rotateY(-10deg);
+            transition: transform 0.5s ease, opacity 0.3s ease;
+            position: absolute;
+            opacity: 0;
+        }
+
+        .phone-img.active-img {
+            opacity: 1;
+            transform: perspective(1000px) rotateY(0deg);
+        }
+
+        .phone-img.zoom-effect {
+            transform: perspective(1000px) rotateY(0deg) scale(1.05);
+        }
+
+        .thumbnail-container {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) var(--secondary);
+        }
+
+        .thumbnail-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .thumbnail-container::-webkit-scrollbar-track {
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+
+        .thumbnail-container::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 3px;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .thumbnail:hover, .thumbnail.active {
+            opacity: 1;
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .product-details {
+            flex: 1;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .product-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .price-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .original-price {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: line-through;
+        }
+
+        .discounted-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .discount-badge {
+            background-color: var(--accent);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .features {
+            margin: 2rem 0;
+        }
+
+        .features h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-item i {
+            color: var(--accent);
+        }
+
+        .payment-options {
+            margin-top: 2rem;
+        }
+
+        .payment-options h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        #paypal-button-container {
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .paypal-only {
+            background-color: var(--secondary);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .paypal-only i {
+            color: #003087;
+            margin-right: 0.5rem;
+        }
+
+        .reviews-section {
+            margin-top: 4rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 50%;
+            height: 3px;
+            background-color: var(--accent);
+        }
+
+        .reviews-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .review-card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 0.8rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer {
+            font-weight: 700;
+        }
+
+        .stars {
+            color: gold;
+        }
+
+        .review-date {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .review-text {
+            line-height: 1.6;
+        }
+
+        .confirmation-message {
+            display: none;
+            background-color: var(--success);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin-top: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .error-message {
+            display: none;
+            background-color: var(--error);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin-top: 1rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding: 2rem 0;
+            border-top: 1px solid var(--secondary);
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Mobile menu */
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Quantity selector */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quantity-btn {
+            background-color: var(--secondary);
+            color: var(--text);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-btn:hover {
+            background-color: var(--accent);
+            color: var(--primary);
+        }
+
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            font-size: 1.2rem;
+            background-color: transparent;
+            border: none;
+            color: var(--text);
+        }
+
+        /* Warranty options */
+        .warranty-options {
+            margin: 1.5rem 0;
+        }
+
+        .warranty-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .warranty-option:hover {
+            background-color: var(--secondary);
+        }
+
+        .warranty-option input {
+            accent-color: var(--accent);
+        }
+
+        .warranty-option label {
+            cursor: pointer;
+        }
+
+        .warranty-price {
+            margin-left: auto;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Delivery options */
+        .delivery-options {
+            margin: 1.5rem 0;
+        }
+
+        .delivery-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .delivery-option:hover {
+            background-color: var(--secondary);
+        }
+
+        .delivery-option input {
+            accent-color: var(--accent);
+        }
+
+        .delivery-option label {
+            cursor: pointer;
+        }
+
+        .delivery-price {
+            margin-left: auto;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .delivery-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Total price */
+        .total-price {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: var(--secondary);
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+        }
+
+        .total-price .label {
+            color: var(--text-secondary);
+        }
+
+        .total-price .price {
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        /* Tech specs table */
+        .tech-specs {
+            margin: 2rem 0;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tech-specs th, .tech-specs td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--secondary);
+        }
+
+        .tech-specs th {
+            color: var(--accent);
+            width: 30%;
+        }
+
+        .tech-specs tr:last-child td {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background-color: var(--secondary);
+                padding: 1rem;
+                z-index: 100;
+            }
+
+            nav ul.show {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-specs th, .tech-specs td {
+                display: block;
+                width: 100%;
+            }
+
+            .tech-specs th {
+                padding-bottom: 0;
+                color: var(--text);
+            }
+
+            .tech-specs td {
+                padding-top: 0.2rem;
+                padding-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-mobile-alt"></i>
+                <span>HybridPhone</span>
+            </div>
+            <nav>
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul id="nav-menu">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Reviews</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Track Order</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="product-section">
+                <div class="product-image">
+                    <div class="main-image-container">
+                        <img src="https://images.unsplash.com/photo-1512054502232-10a0a035d672?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" 
+                             alt="HybridPhone Front View" 
+                             class="phone-img active-img"
+                             loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" 
+                             alt="HybridPhone Side View" 
+                             class="phone-img"
+                             loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1605170439002-90845e8c0137?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" 
+                             alt="HybridPhone Back View" 
+                             class="phone-img"
+                             loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1601784551406-6f0a0a0a3a1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" 
+                             alt="HybridPhone Display View" 
+                             class="phone-img"
+                             loading="lazy">
+                    </div>
+                    <div class="thumbnail-container">
+                        <img src="https://images.unsplash.com/photo-1512054502232-10a0a035d672?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" 
+                             alt="Front View" 
+                             class="thumbnail active"
+                             loading="lazy"
+                             data-index="0">
+                        <img src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" 
+                             alt="Side View" 
+                             class="thumbnail"
+                             loading="lazy"
+                             data-index="1">
+                        <img src="https://images.unsplash.com/photo-1605170439002-90845e8c0137?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" 
+                             alt="Back View" 
+                             class="thumbnail"
+                             loading="lazy"
+                             data-index="2">
+                        <img src="https://images.unsplash.com/photo-1601784551406-6f0a0a0a3a1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" 
+                             alt="Display View" 
+                             class="thumbnail"
+                             loading="lazy"
+                             data-index="3">
+                    </div>
+                </div>
+                <div class="product-details">
+                    <h1 class="product-title">HybridPhone X2 Pro</h1>
+                    <p class="product-subtitle">The world's most advanced dual OS smartphone - Android 15 & iOS 19 in one device</p>
+                    
+                    <div class="price-container">
+                        <span class="original-price">$999</span>
+                        <span class="discounted-price">$799</span>
+                        <span class="discount-badge">20% OFF</span>
+                    </div>
+                    
+                    <div class="quantity-selector">
+                        <button class="quantity-btn" id="decrease-qty">-</button>
+                        <input type="number" class="quantity-input" id="quantity" value="1" min="1" max="10">
+                        <button class="quantity-btn" id="increase-qty">+</button>
+                    </div>
+                    
+                    <div class="features">
+                        <h3>Key Features</h3>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>6.8" Dynamic AMOLED 2X Display</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Dual OS (Android 15 & iOS 19)</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>512GB Storage</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>16GB RAM</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Quad Camera System (200MP main)</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>5500mAh Battery</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <table class="tech-specs">
+                        <tr>
+                            <th>Processor</th>
+                            <td>HybridCore X3 (4nm)</td>
+                        </tr>
+                        <tr>
+                            <th>Refresh Rate</th>
+                            <td>1-144Hz Adaptive</td>
+                        </tr>
+                        <tr>
+                            <th>Charging</th>
+                            <td>100W wired, 50W wireless</td>
+                        </tr>
+                        <tr>
+                            <th>Security</th>
+                            <td>Under-display fingerprint + Face ID</td>
+                        </tr>
+                        <tr>
+                            <th>Connectivity</th>
+                            <td>5G, Wi-Fi 7, Bluetooth 5.3</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="warranty-options">
+                        <h3>Warranty Options</h3>
+                        <div class="warranty-option">
+                            <input type="radio" id="warranty-1" name="warranty" value="1" checked>
+                            <label for="warranty-1">1 Year Manufacturer Warranty</label>
+                            <span class="warranty-price">Free</span>
+                        </div>
+                        <div class="warranty-option">
+                            <input type="radio" id="warranty-2" name="warranty" value="2">
+                            <label for="warranty-2">2 Year Extended Warranty</label>
+                            <span class="warranty-price">$59</span>
+                        </div>
+                        <div class="warranty-option">
+                            <input type="radio" id="warranty-3" name="warranty" value="3">
+                            <label for="warranty-3">3 Year Premium Warranty</label>
+                            <span class="warranty-price">$99</span>
+                        </div>
+                    </div>
+                    
+                    <div class="delivery-options">
+                        <h3>Delivery Options</h3>
+                        <div class="delivery-option">
+                            <input type="radio" id="delivery-standard" name="delivery" value="standard" checked>
+                            <label for="delivery-standard">Standard Shipping</label>
+                            <span class="delivery-time">(15 business days)</span>
+                            <span class="delivery-price">$12.99</span>
+                        </div>
+                        <div class="delivery-option">
+                            <input type="radio" id="delivery-express" name="delivery" value="express">
+                            <label for="delivery-express">Express Shipping</label>
+                            <span class="delivery-time">(8 business days)</span>
+                            <span class="delivery-price">$24.99</span>
+                        </div>
+                    </div>
+                    
+                    <div class="total-price">
+                        <span class="label">Total:</span>
+                        <span class="price" id="total-price">$811.99</span>
+                    </div>
+                    
+                    <div class="payment-options">
+                        <h3>Payment Method</h3>
+                        <div class="paypal-only">
+                            <i class="fab fa-paypal"></i>
+                            <span>We accept PayPal only for secure transactions</span>
+                        </div>
+                        <div id="paypal-button-container"></div>
+                    </div>
+                    
+                    <div class="confirmation-message" id="confirmation-message">
+                        <h3>Your order has been placed!</h3>
+                        <p>Delivery in 8-15 business days. A confirmation email has been sent to your email address.</p>
+                        <p>Order Number: <strong>HPX2-2025-<span id="order-number">0000</span></strong></p>
+                    </div>
+                    
+                    <div class="error-message" id="error-message">
+                        <h3>Payment Processing Error</h3>
+                        <p id="error-details">Please try again or contact support.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="reviews-section">
+                <h2 class="section-title">Customer Reviews</h2>
+                <div class="reviews-container">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <span class="reviewer">Alex Johnson</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <span class="review-date">March 15, 2025</span>
+                        </div>
+                        <p class="review-text">The HybridPhone X2 Pro is a game-changer! Seamless switching between Android and iOS is flawless. The 200MP camera captures stunning details, and battery life lasts me 2 full days. The build quality is premium and the display is simply gorgeous.</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <span class="reviewer">Sarah Miller</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                            <span class="review-date">February 28, 2025</span>
+                        </div>
+                        <p class="review-text">As a tech reviewer, I've tested hundreds of phones. The X2 Pro stands out with its innovative dual OS implementation. The only minor issue is the slightly heavy weight at 228g. Performance is top-notch and the camera system rivals dedicated DSLRs.</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <span class="reviewer">Michael Chen</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <span class="review-date">January 12, 2025</span>
+                        </div>
+                        <p class="review-text">The adaptive 144Hz display is buttery smooth, and having access to both app ecosystems is revolutionary. The HybridCore X3 chip outperforms every other mobile processor. I use Android for work and iOS for personal - perfect balance!</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <span class="reviewer">Emily Rodriguez</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                            <span class="review-date">April 5, 2025</span>
+                        </div>
+                        <p class="review-text">The phone is fantastic, but I wish the fast charger was included in the box. The 100W charging is incredible though - 0 to 100% in just 28 minutes! The dual OS works perfectly, though iOS mode has slightly better battery optimization.</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <span class="reviewer">David Wilson</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <span class="review-date">March 22, 2025</span>
+                        </div>
+                        <p class="review-text">Best phone I've ever owned! The ability to run both operating systems simultaneously (with Android apps in iOS and vice versa) is mind-blowing. The camera's night mode outperforms my friend's iPhone 16 Pro. Worth every penny!</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <span class="reviewer">Jennifer Lee</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                            <span class="review-date">April 18, 2025</span>
+                        </div>
+                        <p class="review-text">The HybridPhone has completely replaced my need for carrying two devices. The transition between OSes is seamless, and the shared storage space is genius. My only complaint is that the phone gets warm during intensive gaming sessions.</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <span class="reviewer">Robert Taylor</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <span class="review-date">February 5, 2025</span>
+                        </div>
+                        <p class="review-text">I was skeptical about the dual OS concept, but HybridPhone nailed it! The hardware is premium, the software is polished, and the performance is stellar. The 200MP camera with hybrid computational photography (combining Android and iOS processing) is revolutionary.</p>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <span class="reviewer">Olivia Martinez</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                            <span class="review-date">March 30, 2025</span>
+                        </div>
+                        <p class="review-text">Great phone overall, but the iOS implementation has some minor limitations compared to actual iPhones (no iMessage on Android side). That said, having access to the Apple ecosystem on Android hardware is amazing. The display quality is unmatched!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 HybridPhone. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        
+        menuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('show');
+        });
+        
+        // Enhanced image gallery functionality
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        const phoneImages = document.querySelectorAll('.phone-img');
+        
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', () => {
+                // Remove active class from all thumbnails
+                thumbnails.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked thumbnail
+                thumbnail.classList.add('active');
+                
+                // Get the index of the clicked thumbnail
+                const index = thumbnail.dataset.index;
+                
+                // Hide all phone images
+                phoneImages.forEach(img => {
+                    img.classList.remove('active-img');
+                    img.classList.remove('zoom-effect');
+                });
+                
+                // Show the selected phone image with animation
+                setTimeout(() => {
+                    phoneImages[index].classList.add('active-img');
+                    setTimeout(() => {
+                        phoneImages[index].classList.add('zoom-effect');
+                    }, 50);
+                }, 50);
+            });
+        });
+        
+        // Quantity selector
+        const decreaseBtn = document.getElementById('decrease-qty');
+        const increaseBtn = document.getElementById('increase-qty');
+        const quantityInput = document.getElementById('quantity');
+        
+        decreaseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                quantityInput.value = value - 1;
+                updateTotalPrice();
+            }
+        });
+        
+        increaseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            let value = parseInt(quantityInput.value);
+            if (value < 10) {
+                quantityInput.value = value + 1;
+                updateTotalPrice();
+            }
+        });
+        
+        quantityInput.addEventListener('change', () => {
+            let value = parseInt(quantityInput.value);
+            if (isNaN(value) || value < 1) quantityInput.value = 1;
+            if (value > 10) quantityInput.value = 10;
+            updateTotalPrice();
+        });
+        
+        // Warranty and delivery options
+        const warrantyOptions = document.querySelectorAll('input[name="warranty"]');
+        const deliveryOptions = document.querySelectorAll('input[name="delivery"]');
+        
+        warrantyOptions.forEach(option => {
+            option.addEventListener('change', updateTotalPrice);
+        });
+        
+        deliveryOptions.forEach(option => {
+            option.addEventListener('change', updateTotalPrice);
+        });
+        
+        // Update total price function
+        function updateTotalPrice() {
+            const quantity = parseInt(quantityInput.value);
+            const basePrice = 799;
+            
+            // Get selected warranty price
+            let warrantyPrice = 0;
+            const selectedWarranty = document.querySelector('input[name="warranty"]:checked');
+            if (selectedWarranty) {
+                if (selectedWarranty.value === "2") warrantyPrice = 59;
+                if (selectedWarranty.value === "3") warrantyPrice = 99;
+            }
+            
+            // Get selected delivery price
+            let deliveryPrice = 12.99;
+            const selectedDelivery = document.querySelector('input[name="delivery"]:checked');
+            if (selectedDelivery && selectedDelivery.value === "express") {
+                deliveryPrice = 24.99;
+            }
+            
+            // Calculate total
+            const total = (basePrice * quantity) + warrantyPrice + deliveryPrice;
+            
+            // Update display
+            document.getElementById('total-price').textContent = `$${total.toFixed(2)}`;
+        }
+        
+        // Initialize with first image zoom effect
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.phone-img.active-img').classList.add('zoom-effect');
+            }, 300);
+        });
+        
+        // PayPal Integration
+        paypal.Buttons({
+            style: {
+                color: 'gold',
+                shape: 'pill',
+                label: 'pay',
+                height: 50,
+                layout: 'vertical'
+            },
+            createOrder: function(data, actions) {
+                const quantity = parseInt(document.getElementById('quantity').value);
+                const basePrice = 799;
+                
+                // Get selected warranty price
+                let warrantyPrice = 0;
+                const selectedWarranty = document.querySelector('input[name="warranty"]:checked');
+                if (selectedWarranty) {
+                    if (selectedWarranty.value === "2") warrantyPrice = 59;
+                    if (selectedWarranty.value === "3") warrantyPrice = 99;
+                }
+                
+                // Get selected delivery price
+                let deliveryPrice = 12.99;
+                const selectedDelivery = document.querySelector('input[name="delivery"]:checked');
+                if (selectedDelivery && selectedDelivery.value === "express") {
+                    deliveryPrice = 24.99;
+                }
+                
+                const total = (basePrice * quantity) + warrantyPrice + deliveryPrice;
+                
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: total.toFixed(2),
+                            breakdown: {
+                                item_total: {
+                                    value: (basePrice * quantity).toFixed(2),
+                                    currency_code: 'USD'
+                                },
+                                shipping: {
+                                    value: deliveryPrice.toFixed(2),
+                                    currency_code: 'USD'
+                                },
+                                handling: {
+                                    value: warrantyPrice.toFixed(2),
+                                    currency_code: 'USD'
+                                }
+                            }
+                        },
+                        items: [
+                            {
+                                name: `HybridPhone X2 Pro (512GB) - Dual OS Smartphone (x${quantity})`,
+                                unit_amount: {
+                                    value: basePrice.toFixed(2),
+                                    currency_code: 'USD'
+                                },
+                                quantity: quantity.toString(),
+                                category: 'PHYSICAL_GOODS'
+                            }
+                        ],
+                        description: 'HybridPhone X2 Pro (512GB) - Dual OS Smartphone'
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    document.getElementById('error-message').style.display = 'none';
+                    document.getElementById('order-number').textContent = Math.floor(1000 + Math.random() * 9000);
+                    document.getElementById('confirmation-message').style.display = 'block';
+                    document.getElementById('confirmation-message').scrollIntoView({ behavior: 'smooth' });
+                    
+                    console.log('Transaction completed by ' + details.payer.name.given_name);
+                });
+            },
+            onError: function(err) {
+                console.error('PayPal error:', err);
+                document.getElementById('error-details').textContent = 'An error occurred while processing your PayPal payment. Please try again or contact support.';
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').scrollIntoView({ behavior: 'smooth' });
+            }
+        }).render('#paypal-button-container');
+    </script>
+</body>
+</html>
